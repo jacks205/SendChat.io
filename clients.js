@@ -4,6 +4,8 @@ exports.clientManager = {};
 exports.addClient = function(socket){ // Adding a client to SendChat but without connecting them to another user
   socket.paired = false;
   socket.searching = false;
+  if(socket.partner)
+    delete socket.partner;
   this.clientManager[socket.id] = socket;
   console.log("Number of Active Users: " + count(this.clientManager));
   console.log("Added User: " + socket.id);
@@ -37,7 +39,7 @@ exports.assignClientToPartner = function(socket){
   console.log("Another user not found for " + socket.id + " awaiting another user to search.");
 }
 
-exports.removeClient = function(socket){
+exports.removeClientPartner = function(socket){
   var partnerSocket = this.clientManager[socket.partner];
   if(partnerSocket){
     console.log("Handling partner.");
@@ -46,6 +48,10 @@ exports.removeClient = function(socket){
     partnerSocket.searching = false; //dont automatically find another user to connect to
     partnerSocket.emit('partner disconnect', 'partner disconnected');
   }
+}
+
+exports.removeClient = function(socket){
+  this.removeClientPartner(socket);
   delete this.clientManager[socket.id]; // delete user
   console.log("Removed User: " + socket.id);
   console.log("Number of Active Users: " + count(this.clientManager));

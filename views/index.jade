@@ -11,18 +11,22 @@ block content
           input.chatinput
         .col-lg-6
           .sendButton
-          button.btn.btn-primary.btn-lg(type="button", onclick="startSearching()").
-            Start Searching
-
+          button#search-btn.btn.btn-primary.btn-lg(type="button", onclick="startSearching()")
+            #btn-text.
+              Start Searching
   
-  script(type="text/javascript", src="/js/jquery.min.js")
+  script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js")
   script(src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js")
   script(src="/socket.io/socket.io.js")
   script(type="text/javascript").
-    var socket = io.connect('http://192.168.1.226:3000');
+    var socket = io.connect('http://10.139.8.35:3000');
+    var searching = false,
+      connected = false;
     socket.emit('new user connection', 'identifier');
     socket.on('matched', function(data){
       console.log("Found a match to: " + data);
+      connected = true;
+      stopSearching();
     });
     socket.on('message', function(data){
       console.log("Message: " + data);
@@ -30,13 +34,34 @@ block content
     });
     socket.on('partner disconnect', function(data){
       console.log('You\'re partner disconnected from SendChat. Search for a new partner.');
+      connected = false;
+      stopSearching();
     });
     function sendMessage(message){
       addToChatbox("You: " + message);
       socket.emit('message', message);
     };
     function startSearching(){
-      socket.emit('search', 'search');
+      if(!searching){
+        if(connected){
+          socket.emit('partner disconnect', 'i am searching');
+          connected = false;
+        }
+        socket.emit('search', 'start');
+        $('#btn-text').text("Stop Searching");
+        searching = true;
+      }
+      else{
+        socket.emit('search', 'stop');
+        $('#btn-text').text("Start Searching");
+        searching = false;
+      }
+    }
+    function stopSearching(){
+      socket.emit('search', 'stop');
+      console.log("Stopping Search");
+      $('#btn-text').text("Start Searching");
+      searching = false;
     }
     function addToChatbox(message){
       $('.chatbox').val($('.chatbox').val() + message + "\n");
