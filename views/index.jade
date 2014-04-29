@@ -3,7 +3,20 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+  
+
+
+  script(src"//code.jquery.com/jquery-1.11.0.min.js")
   script(src="/socket.io/socket.io.js")
   script.
-    var socket = io.connect('http://127.0.0.1:3000');
+    var socket = io.connect('http://192.168.1.226:3000');
     socket.emit('new user connection', 'identifier');
+    socket.on('matched', function(data){
+      console.log("Found a match to: " + data);
+    });
+    function sendMessage(message){
+      socket.emit('message', message);
+    };
+    function startSearching(){
+      socket.emit('search', 'search');
+    }

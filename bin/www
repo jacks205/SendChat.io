@@ -15,12 +15,16 @@ var server = app.listen(app.get('port'), function() {
 var io = require('socket.io').listen(server);
 
 io.sockets.on('connection', function (socket) {
-  
-  socket.on('my other event', function (data) {
-    console.log(data);
-  });
-  socket.on('new user connection', function(data){ //Data on new connection will be a identifier of the client
+  socket.on('new user connection', function(data){ //Data on new connection will be a identifier of the socket
     clients.addClient(socket);
+  });
+  socket.on('search', function(data){
+    console.log(socket.id + " wants to start searching.");
+    clients.startSearching(socket);
+    clients.assignClientToPartner(socket);
+  });
+  socket.on('message', function(data){
+    console.log("Message from " + socket.id + ": " + data);
   });
   socket.on('disconnect', function(data){
     clients.removeClient(socket);
