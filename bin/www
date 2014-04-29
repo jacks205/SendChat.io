@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+var debug = require('debug')('my-application');
+var app = require('../app');
+
+var clients = require('../clients');
+
+app.set('port', process.env.PORT || 3000);
+
+var server = app.listen(app.get('port'), function() {
+  debug('Express server listening on port ' + server.address().port);
+});
+
+//Create Controller for Sockets
+
+var io = require('socket.io').listen(server);
+
+io.sockets.on('connection', function (socket) {
+  
+  socket.on('my other event', function (data) {
+    console.log(data);
+  });
+  socket.on('new user connection', function(data){ //Data on new connection will be a identifier of the client
+    clients.addClient(socket);
+  });
+  socket.on('disconnect', function(data){
+    clients.removeClient(socket);
+  });
+});
