@@ -24,7 +24,7 @@ io.sockets.on('connection', function (socket) {
     clients.assignClientToPartner(socket);
   });
   socket.on('message', function(data){
-    console.log("Message from " + socket.id + ": " + data);
+    clients.sendMessageToPartner(data, socket);
   });
   socket.on('disconnect', function(data){
     clients.removeClient(socket);
