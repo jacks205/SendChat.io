@@ -37,7 +37,7 @@ block content
     });
     socket.on('message', function(data){
       console.log("Message: " + data);
-      addToChatbox("Partner: " + data);
+      postMessageWithDate(data, 'Partner');
     });
     socket.on('partner disconnect', function(data){
       console.log('You\'re partner disconnected from SendChat. Search for a new partner.');
@@ -49,7 +49,7 @@ block content
       $('.chatinput')[0].value = "";
     }
     function sendMessage(message){
-      addToChatbox("You: " + message);
+      postMessageWithDate(message,'You');
       socket.emit('message', message);
     };
     function startSearching(){
@@ -77,7 +77,7 @@ block content
     function addToChatbox(message){
       $('.chatbox').val($('.chatbox').val() + message + "\n");
     }
-    function isMatched(matchedToPartner){
+    function isMatched(matchedToPartner, id){
       if(matchedToPartner){
         matched = true;
         $(".matchedIndicator").css('background-color', 'green');
@@ -87,4 +87,13 @@ block content
         $(".matchedIndicator").css('background-color', 'red');
         $('.matchedText').text("Not Matched");
       }
+    }
+    function postMessageWithDate(message, poster){
+      var date = new Date();
+      var hour = date.getHours();
+      var period = hour >= 12 ? 'PM' : 'AM'; // Check AM or PM
+      hour = hour > 12 ? hour - 12 : hour;
+      var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes().toString() : date.getMinutes().toString();
+      var finalMessage = hour + ":" + minutes + " " + period + " - " + poster + ": " + message;
+      addToChatbox(finalMessage);
     }
