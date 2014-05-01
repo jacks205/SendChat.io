@@ -2,6 +2,8 @@ extends layout
 
 block content
   h1= title
+  .matchedIndicator
+    p.matchedText Not Matched
   .chat
     .container
       .row
@@ -25,11 +27,12 @@ block content
     var pathname = window.location.pathname;
     var socket = io.connect(pathname);
     var searching = false,
-      connected = false;
+      matched = false;
+    isMatched(false);
     socket.emit('new user connection', 'identifier');
     socket.on('matched', function(data){
       console.log("Found a match to: " + data);
-      connected = true;
+      isMatched(true);
       stopSearching();
     });
     socket.on('message', function(data){
@@ -38,7 +41,7 @@ block content
     });
     socket.on('partner disconnect', function(data){
       console.log('You\'re partner disconnected from SendChat. Search for a new partner.');
-      connected = false;
+      isMatched(false);
       stopSearching();
     });
     function sendTextFromInput(){
@@ -51,9 +54,9 @@ block content
     };
     function startSearching(){
       if(!searching){
-        if(connected){
+        if(matched){
           socket.emit('partner disconnect', 'i am searching');
-          connected = false;
+          isMatched(false);
         }
         socket.emit('search', 'start');
         $('#btn-text').text("Stop Searching");
@@ -73,4 +76,15 @@ block content
     }
     function addToChatbox(message){
       $('.chatbox').val($('.chatbox').val() + message + "\n");
+    }
+    function isMatched(matchedToPartner){
+      if(matchedToPartner){
+        matched = true;
+        $(".matchedIndicator").css('background-color', 'green');
+        $('.matchedText').text("Matched!");
+      }else{
+        matched = false;
+        $(".matchedIndicator").css('background-color', 'red');
+        $('.matchedText').text("Not Matched");
+      }
     }

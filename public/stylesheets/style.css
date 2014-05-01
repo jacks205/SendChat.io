@@ -16,3 +16,17 @@ textarea.chatbox{
 input.chatinput{
   width: 500px;
 }
+
+.matchedIndicator{
+  height: 20px;
+  width: 20px;
+  background-color: red;
+}
+
+.matchedText{
+  margin-left: 30px;
+}
+
+.chat{
+  padding-top: 40px;
+}
