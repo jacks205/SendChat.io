@@ -19,6 +19,8 @@ block content
           button#search-btn.btn.btn-primary.btn-lg(type="button", onclick="startSearching()")
             #btn-text.
               Start Searching
+          div Total Users = 
+            span.totalUsers 0
   
   script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js")
   script(src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js")
@@ -43,6 +45,10 @@ block content
       console.log('You\'re partner disconnected from SendChat. Search for a new partner.');
       isMatched(false);
       stopSearching();
+    });
+    socket.on('user count', function(data){
+      console.log('Total Users: ' + data);
+      $('.totalUsers').text(data);
     });
     function sendTextFromInput(){
       sendMessage($('.chatinput')[0].value);

@@ -7,8 +7,10 @@ exports.addClient = function(socket){ // Adding a client to SendChat but without
   if(socket.partner)
     delete socket.partner;
   this.clientManager[socket.id] = socket;
-  console.log("Number of Active Users: " + count(this.clientManager));
+  var userCount = count(this.clientManager);
+  console.log("Number of Active Users: " + userCount);
   console.log("Added User: " + socket.id);
+  sendToAllUsers('user count', userCount, this.clientManager);
 }
 
 exports.startSearching = function(socket){
@@ -53,11 +55,13 @@ exports.removeClientPartner = function(socket){
 exports.removeClient = function(socket){
   this.removeClientPartner(socket);
   delete this.clientManager[socket.id]; // delete user
+  var userCount = count(this.clientManager);
+  console.log("Number of Active Users: " + userCount);
   console.log("Removed User: " + socket.id);
-  console.log("Number of Active Users: " + count(this.clientManager));
+  sendToAllUsers('user count', userCount, this.clientManager);
 }
 
-// Counting number of users in clientManager
+// Counting number of users
 function count(obj) { return Object.keys(obj).length; }
 
 function connectTwoClients(socketA, socketB){
@@ -69,4 +73,12 @@ function connectTwoClients(socketA, socketB){
   socketB.searching = false;
   socketA.emit('matched', socketB.id);
   socketB.emit('matched', socketA.id);
+}
+
+function sendToAllUsers(event, message, set){
+  for(var socketId in set){
+    var socket = set[socketId];
+    socket.emit(event, message);
+  }
+  console.log("Sent to all " + count(set) + " users: " + message);
 }
