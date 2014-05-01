@@ -9,6 +9,9 @@ block content
           .chatform
             textarea.chatbox
           input.chatinput
+          button#send-btn.btn.btn-primary(type="button", onclick="sendTextFromInput()")
+            #btn-send.
+              Send
         .col-lg-6
           .sendButton
           button#search-btn.btn.btn-primary.btn-lg(type="button", onclick="startSearching()")
@@ -19,7 +22,7 @@ block content
   script(src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js")
   script(src="/socket.io/socket.io.js")
   script(type="text/javascript").
-    var socket = io.connect('http://10.139.8.35:3000');
+    var socket = io.connect('http://10.139.10.162:3000');
     var searching = false,
       connected = false;
     socket.emit('new user connection', 'identifier');
@@ -37,6 +40,10 @@ block content
       connected = false;
       stopSearching();
     });
+    function sendTextFromInput(){
+      sendMessage($('.chatinput')[0].value);
+      $('.chatinput')[0].value = "";
+    }
     function sendMessage(message){
       addToChatbox("You: " + message);
       socket.emit('message', message);
