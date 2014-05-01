@@ -22,7 +22,12 @@ block content
   script(src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js")
   script(src="/socket.io/socket.io.js")
   script(type="text/javascript").
+<<<<<<< HEAD
     var socket = io.connect('http://10.139.10.162:3000');
+=======
+    var pathname = window.location.pathname;
+    var socket = io.connect(pathname);
+>>>>>>> 5d15512979f8e7ec3588419a10079061aaa6fbc9
     var searching = false,
       connected = false;
     socket.emit('new user connection', 'identifier');
