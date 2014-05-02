@@ -33,8 +33,9 @@ block content
     isMatched(false);
     $('.chatinput').keydown(function(e){  
     if (e.keyCode == 13) {
-      $('#send-btn').click();
-    } });
+        $('#send-btn').click();
+      } 
+    });
     socket.emit('new user connection', 'identifier');
     socket.on('matched', function(data){
       console.log("Found a match to: " + data);
@@ -109,4 +110,8 @@ block content
       var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes().toString() : date.getMinutes().toString();
       var finalMessage = hour + ":" + minutes + " " + period + " - " + poster + ": " + message;
       addToChatbox(finalMessage);
+      scrollToBottom();
+    }
+    function scrollToBottom() {
+      $('.chatbox').scrollTop($('.chatbox')[0].scrollHeight);
     }
