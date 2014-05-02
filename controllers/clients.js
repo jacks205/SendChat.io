@@ -1,3 +1,4 @@
+var video = require('../controllers/video');
 //TODO: Move into controllers folder
 exports.clientManager = {};
 
@@ -10,6 +11,7 @@ exports.addClient = function(socket){ // Adding a client to SendChat but without
   var userCount = count(this.clientManager);
   console.log("Number of Active Users: " + userCount);
   console.log("Added User: " + socket.id);
+  socket.emit('apiKey', video.key);
   sendToAllUsers('user count', userCount, this.clientManager);
 }
 
@@ -46,6 +48,8 @@ exports.removeClientPartner = function(socket){
   if(partnerSocket){
     console.log("Handling partner.");
     delete partnerSocket.partner;
+    delete partnerSocket.session_id;
+    delete partnerSocket.token;
     partnerSocket.paired = false; // partner is no longer connected to user
     partnerSocket.searching = false; //dont automatically find another user to connect to
     partnerSocket.emit('partner disconnect', 'partner disconnected');
@@ -71,8 +75,22 @@ function connectTwoClients(socketA, socketB){
   socketB.paired = true;
   socketA.searching = false;
   socketB.searching = false;
-  socketA.emit('matched', socketB.id);
-  socketB.emit('matched', socketA.id);
+  
+  video.generateSession(function(sessionID) {
+    var session = sessionID;
+
+    console.log("Session: " + session);
+    socketA.session_id = session;
+    socketB.session_id = session;
+    var token = video.generateToken(session);
+    console.log("Token: " + token);
+    socketA.token = token;
+    socketB.token = token;
+    socketA.emit('session', socketB.session_id);
+    socketB.emit('session', socketA.session_id);
+    socketA.emit('token', socketB.token);
+    socketB.emit('token', socketA.token);
+  });
 }
 
 function sendToAllUsers(event, message, set){

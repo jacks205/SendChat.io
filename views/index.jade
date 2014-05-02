@@ -21,15 +21,19 @@ block content
               Start Searching
           div Total Users = 
             span.totalUsers 0
-  
+        #video-source
   script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js")
   script(src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js")
+  script(src="//static.opentok.com/webrtc/v2.2/js/opentok.min.js")
   script(src="/socket.io/socket.io.js")
   script(type="text/javascript").
     var pathname = window.location.pathname;
     var socket = io.connect(pathname);
     var searching = false,
-      matched = false;
+      matched = false,
+      session_id = '',
+      token = '',
+      apiKey = '';
     isMatched(false);
     $('.chatinput').keydown(function(e){  
     if (e.keyCode == 13) {
@@ -37,17 +41,28 @@ block content
       } 
     });
     socket.emit('new user connection', 'identifier');
-    socket.on('matched', function(data){
-      console.log("Found a match to: " + data);
+    socket.on('apiKey', function(data){
+      console.log("ApiKey: " + data);
+      apiKey = data;
+    });
+    socket.on('session', function(data){
+      console.log("Found a match with session: " + data);
+      session_id = data;
       isMatched(true);
       stopSearching();
+    });
+    socket.on('token', function(data){
+      console.log("Token: " + data);
+      token = data;
+      var session = OT.initSession(apiKey, session_id);
+      connectToVideoSession(session, token);
     });
     socket.on('message', function(data){
       console.log("Message: " + data);
       postMessageWithDate(data, 'Partner');
     });
     socket.on('partner disconnect', function(data){
-      console.log('You\'re partner disconnected from SendChat. Search for a new partner.');
+      console.log("You're partner disconnected from SendChat. Search for a new partner.");
       isMatched(false);
       stopSearching();
     });
@@ -114,4 +129,11 @@ block content
     }
     function scrollToBottom() {
       $('.chatbox').scrollTop($('.chatbox')[0].scrollHeight);
+    }
+    function connectToVideoSession(session, token){
+      session.on("sessionConnected", function(sessionConnectEvent) {
+        var publisher = TB.initPublisher(apiKey, '#video-source');
+        session.publish(publisher);
+      });
+      session.connect(token);
     }
