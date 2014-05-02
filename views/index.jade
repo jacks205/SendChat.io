@@ -9,7 +9,7 @@ block content
       .row
         .col-lg-6
           .chatform
-            textarea.chatbox
+            textarea.chatbox(readonly="readonly")
           input.chatinput
           button#send-btn.btn.btn-primary(type="button", onclick="sendTextFromInput()")
             #btn-send.
@@ -31,6 +31,10 @@ block content
     var searching = false,
       matched = false;
     isMatched(false);
+    $('.chatinput').keydown(function(e){  
+    if (e.keyCode == 13) {
+      $('#send-btn').click();
+    } });
     socket.emit('new user connection', 'identifier');
     socket.on('matched', function(data){
       console.log("Found a match to: " + data);
@@ -55,8 +59,11 @@ block content
       $('.chatinput')[0].value = "";
     }
     function sendMessage(message){
-      postMessageWithDate(message,'You');
-      socket.emit('message', message);
+      var stripedMessage = $.trim(message);
+      if(stripedMessage != ""){
+        postMessageWithDate(stripedMessage,'You');
+        socket.emit('message', stripedMessage);
+      } 
     };
     function startSearching(){
       if(!searching){
