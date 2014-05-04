@@ -35,6 +35,10 @@ block content
       token = '',
       apiKey = '';
     var session; // Session object for video chat
+    OT.setLogLevel(OT.DEBUG);
+    OT.on("exception", function exceptionHandler(event) {
+        console.log(event)
+    });
     isMatched(false);
     $('.chatinput').keydown(function(e){  
     if (e.keyCode == 13) {
@@ -55,7 +59,12 @@ block content
     socket.on('token', function(data){
       console.log("Token: " + data);
       token = data;
-      session = OT.initSession(apiKey, session_id);
+      if (OT.checkSystemRequirements() == 1) {
+        session = OT.initSession(apiKey, session_id);
+      }else{
+        alert("You're browser doesn't support the video chat.");
+        return;
+      }
       connectToVideoSession(session, token);
     });
     socket.on('message', function(data){
@@ -64,7 +73,7 @@ block content
     });
     socket.on('partner disconnect', function(data){
       console.log("You're partner disconnected from SendChat. Search for a new partner.");
-      if(session) session.disconnect(); console.log("Disconnected from video session.");
+      disconnectFromVideoSession();
       isMatched(false);
       stopSearching();
     });
@@ -87,7 +96,7 @@ block content
       if(!searching){
         if(matched){
           socket.emit('partner disconnect', 'i am searching');
-          if(session) session.disconnect(); console.log("Disconnected from video session.");
+          disconnectFromVideoSession();
           isMatched(false);
         }
         socket.emit('search', 'start');
@@ -134,9 +143,30 @@ block content
       $('.chatbox').scrollTop($('.chatbox')[0].scrollHeight);
     }
     function connectToVideoSession(session, token){
+      session.on("streamCreated", function(event) {
+        session.subscribe(event.stream);
+      });
       session.on("sessionConnected", function(sessionConnectEvent) {
         var publisher = TB.initPublisher(apiKey, '#video-source');
         session.publish(publisher);
       });
-      session.connect(token);
+      session.on('sessionDisconnected', function sessionDisconnectHandler(event) {
+        // The event is defined by the SessionDisconnectEvent class
+        if (event.reason == "networkDisconnected") {
+          alert("Your network connection terminated.")
+        }
+      });
+      session.connect(token, function(error) {
+        if (error) {
+          console.log("Error connecting: ", error.code, error.message);
+        } else {
+          console.log("Connected to the session.");
+        }
+      });
+    }
+    function disconnectFromVideoSession(){
+      if(session){
+        session.disconnect();
+        console.log("Disconnected from video session.");
+      }
     }
