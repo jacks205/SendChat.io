@@ -34,6 +34,7 @@ block content
       session_id = '',
       token = '',
       apiKey = '';
+    var session; // Session object for video chat
     isMatched(false);
     $('.chatinput').keydown(function(e){  
     if (e.keyCode == 13) {
@@ -54,7 +55,7 @@ block content
     socket.on('token', function(data){
       console.log("Token: " + data);
       token = data;
-      var session = OT.initSession(apiKey, session_id);
+      session = OT.initSession(apiKey, session_id);
       connectToVideoSession(session, token);
     });
     socket.on('message', function(data){
@@ -63,6 +64,7 @@ block content
     });
     socket.on('partner disconnect', function(data){
       console.log("You're partner disconnected from SendChat. Search for a new partner.");
+      if(session) session.disconnect(); console.log("Disconnected from video session.");
       isMatched(false);
       stopSearching();
     });
@@ -85,6 +87,7 @@ block content
       if(!searching){
         if(matched){
           socket.emit('partner disconnect', 'i am searching');
+          if(session) session.disconnect(); console.log("Disconnected from video session.");
           isMatched(false);
         }
         socket.emit('search', 'start');
@@ -106,7 +109,7 @@ block content
     function addToChatbox(message){
       $('.chatbox').val($('.chatbox').val() + message + "\n");
     }
-    function isMatched(matchedToPartner, id){
+    function isMatched(matchedToPartner){
       if(matchedToPartner){
         matched = true;
         $(".matchedIndicator").css('background-color', 'green');
