@@ -115,10 +115,10 @@ function scrollToBottom() {
 }
 function connectToVideoSession(session, token){
   session.on("streamCreated", function(event) {
-    session.subscribe(event.stream);
+    session.subscribe(event.stream, 'subscriber-source');
   });
   session.on("sessionConnected", function(sessionConnectEvent) {
-    var publisher = TB.initPublisher(apiKey, '#video-source');
+    var publisher = TB.initPublisher(apiKey, 'publisher-source');
     session.publish(publisher);
   });
   session.on('sessionDisconnected', function sessionDisconnectHandler(event) {
