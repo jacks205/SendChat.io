@@ -115,10 +115,10 @@ function scrollToBottom() {
 }
 function connectToVideoSession(session, token){
   session.on("streamCreated", function(event) {
-    session.subscribe(event.stream, 'subscriber-source');
+    session.subscribe(event.stream, 'subscriber-source',{width: 284, height: 218});
   });
   session.on("sessionConnected", function(sessionConnectEvent) {
-    var publisher = TB.initPublisher(apiKey, 'publisher-source');
+    var publisher = TB.initPublisher(apiKey, 'publisher-source', {width: 284, height: 218});
     session.publish(publisher);
   });
   session.on('sessionDisconnected', function sessionDisconnectHandler(event) {
@@ -141,4 +141,6 @@ function disconnectFromVideoSession(){
     console.log("Disconnected from video session.");
   }
   console.log("Successfully Disconnected.");
+  $( "<div id='subscriber-source'></div>" ).appendTo( "#subscriber" );
+  $( "<div id='publisher-source'></div>" ).appendTo( "#publisher" );
 }
