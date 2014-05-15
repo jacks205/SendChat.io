@@ -7,6 +7,8 @@ Online video and chat application resembling current sites such as Omegle or Cha
 
 Implementation is done in Nodejs with heavy reliability using Socket.io to drive the communication between users.
 
+Warning: Heroku app isn't as responsive as hosting the server yourself. Wait until site gives you a total user count, then start searching.
+
 Instructions
 -------------
 
