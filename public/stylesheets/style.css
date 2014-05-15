@@ -1,6 +1,7 @@
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #2E5C8A;
 }
 
 a {
@@ -43,9 +44,12 @@ input.chatinput{
 
 #videobar{
   width:304px;
-  height:476px;
+  height:466px;
   float:left;
-  background-color: #3B83FF;
+  background-color: #FFFFCC;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
 }
 
 .video-source{
@@ -53,4 +57,25 @@ input.chatinput{
   height: 218px;
   background-color: black;
   margin: 10px 10px;
+}
+
+h1{
+  display: inline;
+  color: #FFFFCC;
+  font-family: 'Impact';
+  margin: 40%;
+  font-size: 64px;
+}
+
+.matchedText{
+  color: #FFFFCC;
+}
+
+.btn-primary{
+  background-color: #FFFFCC;
+  border-color: #FFFFCC;
+}
+
+#btn-text{
+  color: #000000;
 }
