@@ -25,6 +25,7 @@ socket.on('session', function(data){
   console.log("Found a match with session: " + data);
   session_id = data;
   isMatched(true);
+  clearChatbox();
   stopSearching();
 });
 socket.on('token', function(data){
@@ -88,6 +89,9 @@ function stopSearching(){
 }
 function addToChatbox(message){
   $('.chatbox').val($('.chatbox').val() + message + "\n");
+}
+function clearChatbox(){
+  $('.chatbox').val('');
 }
 function isMatched(matchedToPartner){
   if(matchedToPartner){
