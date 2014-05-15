@@ -10,7 +10,7 @@ a {
 
 textarea.chatbox{
   width: 500px; 
-  height: 446px;
+  height: 441px;
   resize: none;
   overflow: auto;
 }
@@ -47,10 +47,10 @@ input.chatinput{
   height:466px;
   float:left;
   background-color: #FFFFCC;
-  -moz-border-radius: 5px;
+  /*-moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-}
+*/}
 
 .video-source{
   width:284px;
@@ -61,21 +61,40 @@ input.chatinput{
 
 h1{
   display: inline;
-  color: #FFFFCC;
   font-family: 'Impact';
   margin: 40%;
   font-size: 64px;
 }
 
-.matchedText{
-  color: #FFFFCC;
-}
-
 .btn-primary{
   background-color: #FFFFCC;
   border-color: #FFFFCC;
+  -moz-border-radius: 0px;
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
 }
 
-#btn-text{
+.btn-primary.btn:hover{
+  background-color: #E6E6B8;
+}
+
+.btn-text{
   color: #000000;
+}
+
+.backgrndText{
+  color: #FFFFCC;
+}
+
+#send-btn{
+  width: 90px;
+  float: right;
+}
+
+#sidebar{
+  margin-left: 20px;
+}
+
+.info{
+  margin-top: 10px;
 }

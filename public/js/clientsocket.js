@@ -56,6 +56,7 @@ socket.on('user count', function(data){
 function sendTextFromInput(){
   sendMessage($('.chatinput')[0].value);
   $('.chatinput')[0].value = "";
+  $('#send-btn').css({'background-color': '#FFFFCC', 'border-color': '#FFFFCC'});
 }
 function sendMessage(message){
   var stripedMessage = $.trim(message);
@@ -72,19 +73,21 @@ function startSearching(){
       isMatched(false);
     }
     socket.emit('search', 'start');
-    $('#btn-text').text("Stop Searching");
+    $('#btn-search-text').text("Stop Searching");
+    $('#search-btn').css({'background-color': '#FFFFCC', 'border-color': '#FFFFCC'});
     searching = true;
   }
   else{
     socket.emit('search', 'stop');
-    $('#btn-text').text("Start Searching");
+    $('#btn-search-text').text("Start Searching");
+    $('#search-btn').css({'background-color': '#FFFFCC', 'border-color': '#FFFFCC'});
     searching = false;
   }
 }
 function stopSearching(){
   socket.emit('search', 'stop');
   console.log("Stopping Search");
-  $('#btn-text').text("Start Searching");
+  $('#btn-search-text').text("Start Searching");
   searching = false;
 }
 function addToChatbox(message){
@@ -101,7 +104,7 @@ function isMatched(matchedToPartner){
   }else{
     matched = false;
     $(".matchedIndicator").css('background-color', 'red');
-    $('.matchedText').text("Not Matched");
+    $('.matchedText').text("Unmatched");
   }
 }
 function postMessageWithDate(message, poster){
